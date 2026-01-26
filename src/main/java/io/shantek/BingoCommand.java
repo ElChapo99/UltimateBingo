@@ -25,7 +25,7 @@ public class BingoCommand implements CommandExecutor {
     String loadoutType = "Empty Inventory";
 
     private final Map<String, List<String>> settingOptions = Map.of(
-            "GameMode", List.of("traditional", "speedrun", "brewdash", "group", "teams"),
+            "GameMode", List.of("traditional", "speedrun", "brewdash", "group", "teams", "shuffle"),
             "Difficulty", List.of("easy", "normal", "hard"),
             "CardSize", List.of("small", "medium", "large"),
             "Loadout", List.of("Naked Kit", "Starter Kit", "Boat Kit", "Flying Kit", "Archer Kit"),
@@ -420,6 +420,18 @@ public class BingoCommand implements CommandExecutor {
                     } else {
                         ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GREEN + "Get a single row to win! " + timeLimitString);
                     }
+                } else if (ultimateBingo.currentGameMode.equalsIgnoreCase("shuffle")) {
+
+                    ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GREEN + "Shuffle mode - Cards shuffle every " + ultimateBingo.shuffleIntervalMinutes + " minutes!");
+
+                    if (ultimateBingo.currentFullCard) {
+                        ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GREEN + "Get a full card to win! " + timeLimitString);
+                    } else {
+                        ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GREEN + "Get a single row to win! " + timeLimitString);
+                    }
+
+                    // Start the shuffle scheduler
+                    ultimateBingo.bingoManager.startShuffleMode();
                 }
 
             }, 350);
@@ -538,6 +550,9 @@ public class BingoCommand implements CommandExecutor {
 
             // Cancel any tasks that are currently scheduled
             Bukkit.getScheduler().cancelTasks(ultimateBingo);
+
+            // Stop shuffle mode if active
+            ultimateBingo.bingoManager.stopShuffleMode();
 
             ultimateBingo.bingoButtonActive = true;
             if (!gameCompleted) {
