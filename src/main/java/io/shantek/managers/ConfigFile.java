@@ -64,6 +64,7 @@ public class ConfigFile {
             ultimateBingo.countSoloGames = getBoolean(config, "count-solo-games", false);
             ultimateBingo.gameTime = getInt(config, "game-time", 0);
             ultimateBingo.loadoutType = getInt(config, "player-loadout", 0);
+            ultimateBingo.shuffleIntervalMinutes = getInt(config, "shuffle-interval-minutes", 5);
 
         } catch (Exception e) {
             ultimateBingo.getLogger().log(Level.SEVERE, "An error occurred while reloading the config file", e);
@@ -72,13 +73,13 @@ public class ConfigFile {
 
     private boolean checkForMissingKeys(FileConfiguration config) {
         List<String> keysToCheck = Arrays.asList(
-                "count-solo-games", "multi-world-server", "bingo-world", "full-card", "difficulty", "card-size", "unique-card", "console-logs", "game-mode", "respawn-teleport", "reveal-cards", "game-time", "player-loadout");
+                "count-solo-games", "multi-world-server", "bingo-world", "full-card", "difficulty", "card-size", "unique-card", "console-logs", "game-mode", "respawn-teleport", "reveal-cards", "game-time", "player-loadout", "shuffle-interval-minutes");
         return keysToCheck.stream().anyMatch(key -> !config.contains(key));
     }
 
     private Map<String, Object> saveMissingKeyValues(FileConfiguration config) {
         List<String> keysToCheck = Arrays.asList(
-                "count-solo-games", "multi-world-server", "bingo-world", "full-card", "difficulty", "card-size", "unique-card", "console-logs", "game-mode", "respawn-teleport", "reveal-cards", "game-time", "player-loadout");
+                "count-solo-games", "multi-world-server", "bingo-world", "full-card", "difficulty", "card-size", "unique-card", "console-logs", "game-mode", "respawn-teleport", "reveal-cards", "game-time", "player-loadout", "shuffle-interval-minutes");
 
         Map<String, Object> missingKeyValues = new HashMap<>();
         keysToCheck.forEach(key -> {
@@ -160,10 +161,6 @@ public class ConfigFile {
     }
 
     public void loadCurrentConfig() {
-
-
-
-
 
     }
 

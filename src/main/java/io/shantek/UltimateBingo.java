@@ -56,6 +56,7 @@ public final class UltimateBingo extends JavaPlugin {
     public String bingoWorld = "default";
     public boolean multiWorldServer = false;
     public boolean countSoloGames = false;
+    public int shuffleIntervalMinutes = 5;
 
     // Current game configuration - Implemented to allow
     // random assignment of game setup
@@ -68,6 +69,9 @@ public final class UltimateBingo extends JavaPlugin {
     public int currentLoadoutType = 1;
 
     public boolean bingoButtonActive = true;
+
+    // Shuffle mode tracking
+    public int shuffleTaskId = -1;
 
     // Inventory used for group game mode
     public Inventory groupInventory;

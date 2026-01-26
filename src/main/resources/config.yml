@@ -18,6 +18,9 @@ bingo-world: default
 # This could be a way for players to inflate results so is disabled by default
 count-solo-games: false
 
+# Shuffle mode: How many minutes between card shuffles (default: 5)
+shuffle-interval-minutes: 5
+
 ################################################
 # Current game configuration - Don't manually change this
 # Only adjust with the /bingo gui command in game
