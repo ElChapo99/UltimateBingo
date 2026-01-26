@@ -412,7 +412,7 @@ public class BingoFunctions
             // Set the flight duration to level 3
             fireworkMeta.setPower(3);
             firework.setItemMeta(fireworkMeta);
-       }
+        }
 
         return firework;
     }
@@ -582,7 +582,7 @@ public class BingoFunctions
                 if (ultimateBingo.bingoFunctions.isActivePlayer(p)) {
                     p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1.0f, 1.0f);
                 }
-                            }
+            }
         }, threeMinutesLeft);
 
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
@@ -736,7 +736,7 @@ public class BingoFunctions
         return playerCount;
     }
 
-  public void broadcastMessageToBingoPlayers(String message) {
+    public void broadcastMessageToBingoPlayers(String message) {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (isActivePlayer(player)) {
                 player.sendMessage(message);
@@ -1037,6 +1037,9 @@ public class BingoFunctions
                 ultimateBingo.gameMode = "teams";
                 break;
             case "teams":
+                ultimateBingo.gameMode = "shuffle";
+                break;
+            case "shuffle":
                 ultimateBingo.gameMode = "random";
                 break;
             case "random":

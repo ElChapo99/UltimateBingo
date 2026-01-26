@@ -23,7 +23,7 @@ public class BingoGameGUIManager {
         optionsMap = new HashMap<>();
         optionsMap.put("difficulty", new String[]{"easy", "normal", "hard"});
         optionsMap.put("cardSize", new String[]{"small", "medium", "large"});
-        optionsMap.put("gameMode", new String[]{"speedrun", "traditional", "brewdash", "group", "teams"});
+        optionsMap.put("gameMode", new String[]{"speedrun", "traditional", "brewdash", "group", "teams", "shuffle"});
         optionsMap.put("uniqueCard", new String[]{"unique", "identical"});
         optionsMap.put("fullCard", new String[]{"full card", "single row"});
         optionsMap.put("revealCards", new String[]{"enabled", "disabled"});
@@ -100,6 +100,9 @@ public class BingoGameGUIManager {
                 ultimateBingo.gameMode = "teams";
                 break;
             case "teams":
+                ultimateBingo.gameMode = "shuffle";
+                break;
+            case "shuffle":
                 ultimateBingo.gameMode = "random";
                 break;
             case "random":
@@ -359,7 +362,9 @@ public class BingoGameGUIManager {
             } else if (ultimateBingo.gameMode.equalsIgnoreCase("teams")) {
                 materialToDisplay = Material.RED_WOOL;
             } else if (ultimateBingo.gameMode.equalsIgnoreCase("brewdash")) {
-                    materialToDisplay = Material.POTION;
+                materialToDisplay = Material.POTION;
+            } else if (ultimateBingo.gameMode.equalsIgnoreCase("shuffle")) {
+                materialToDisplay = Material.DROPPER;
             } else if (ultimateBingo.gameMode.equalsIgnoreCase("random")) {
                 materialToDisplay = Material.LADDER;
             } else {
@@ -385,7 +390,7 @@ public class BingoGameGUIManager {
             if (ultimateBingo.revealCards.equalsIgnoreCase("enabled")) {
                 materialToDisplay = Material.SPYGLASS;
             } else if (ultimateBingo.revealCards.equalsIgnoreCase("random")) {
-                    materialToDisplay = Material.MINECART;
+                materialToDisplay = Material.MINECART;
             } else {
                 materialToDisplay = Material.BLACK_CONCRETE;
             }
@@ -397,4 +402,3 @@ public class BingoGameGUIManager {
 
     }
 }
-
