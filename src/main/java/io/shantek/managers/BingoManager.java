@@ -526,29 +526,29 @@ public class BingoManager {
                             }
                         }
                     }
-                        else if (ultimateBingo.gameMode.equalsIgnoreCase("teams")) {
+                    else if (ultimateBingo.gameMode.equalsIgnoreCase("teams")) {
 
-                            if (ultimateBingo.bingoFunctions.getTeam(player).equalsIgnoreCase("red")) {
-                                ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.RED + player.getName() + ChatColor.WHITE + " collected the last item! Well done, team " + ChatColor.RED + "RED" + ChatColor.WHITE + "!");
+                        if (ultimateBingo.bingoFunctions.getTeam(player).equalsIgnoreCase("red")) {
+                            ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.RED + player.getName() + ChatColor.WHITE + " collected the last item! Well done, team " + ChatColor.RED + "RED" + ChatColor.WHITE + "!");
 
-                            } else if (ultimateBingo.bingoFunctions.getTeam(player).equalsIgnoreCase("yellow")) {
-                                ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.YELLOW + player.getName() + ChatColor.WHITE + " collected the last item! Well done, team " + ChatColor.YELLOW + "YELLOW" + ChatColor.WHITE + "!");
+                        } else if (ultimateBingo.bingoFunctions.getTeam(player).equalsIgnoreCase("yellow")) {
+                            ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.YELLOW + player.getName() + ChatColor.WHITE + " collected the last item! Well done, team " + ChatColor.YELLOW + "YELLOW" + ChatColor.WHITE + "!");
 
-                            } else if (ultimateBingo.bingoFunctions.getTeam(player).equalsIgnoreCase("blue")) {
-                                ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.BLUE + player.getName() + ChatColor.WHITE + " collected the last item! Well done, team " + ChatColor.BLUE + "BLUE" + ChatColor.WHITE + "!");
+                        } else if (ultimateBingo.bingoFunctions.getTeam(player).equalsIgnoreCase("blue")) {
+                            ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.BLUE + player.getName() + ChatColor.WHITE + " collected the last item! Well done, team " + ChatColor.BLUE + "BLUE" + ChatColor.WHITE + "!");
 
-                            } else {
-                                ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GOLD + player.getName() + ChatColor.GREEN + " collected the last item! Well done, team!");
+                        } else {
+                            ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GOLD + player.getName() + ChatColor.GREEN + " collected the last item! Well done, team!");
 
+                        }
+
+                        for (Player target : Bukkit.getOnlinePlayers()) {
+                            if (ultimateBingo.bingoFunctions.isActivePlayer(target)) {
+                                target.playSound(target.getLocation(), Sound.ENTITY_GHAST_SCREAM, 1.0f, 1.0f);
+                                target.sendTitle(ultimateBingo.bingoFunctions.getTeam(player).toUpperCase() + " got BINGO!",
+                                        ChatColor.GREEN.toString() + ChatColor.BOLD + "Woop woop!");
                             }
-
-                            for (Player target : Bukkit.getOnlinePlayers()) {
-                                if (ultimateBingo.bingoFunctions.isActivePlayer(target)) {
-                                    target.playSound(target.getLocation(), Sound.ENTITY_GHAST_SCREAM, 1.0f, 1.0f);
-                                    target.sendTitle(ultimateBingo.bingoFunctions.getTeam(player).toUpperCase() + " got BINGO!",
-                                            ChatColor.GREEN.toString() + ChatColor.BOLD + "Woop woop!");
-                                }
-                            }
+                        }
                     } else {
                         ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GOLD + player.getName() + ChatColor.GREEN + " got BINGO! Nice work!");
                         for (Player target : Bukkit.getOnlinePlayers()) {
@@ -708,6 +708,180 @@ public class BingoManager {
         ultimateBingo.bingoFunctions.addPlayer(player.getUniqueId());
 
 
+    }
+
+    // Shuffle Mode Methods
+    public void startShuffleMode() {
+        if (ultimateBingo.shuffleTaskId != -1) {
+            stopShuffleMode();
+        }
+
+        int intervalTicks = ultimateBingo.shuffleIntervalMinutes * 60 * 20; // Convert minutes to ticks
+
+        ultimateBingo.shuffleTaskId = Bukkit.getScheduler().scheduleSyncRepeatingTask(
+                ultimateBingo,
+                this::performShuffle,
+                intervalTicks,  // Initial delay
+                intervalTicks   // Repeat interval
+        );
+    }
+
+    public void stopShuffleMode() {
+        if (ultimateBingo.shuffleTaskId != -1) {
+            Bukkit.getScheduler().cancelTask(ultimateBingo.shuffleTaskId);
+            ultimateBingo.shuffleTaskId = -1;
+        }
+    }
+
+    private void performShuffle() {
+        // Countdown: 3, 2, 1
+        Bukkit.getScheduler().runTaskLater(ultimateBingo, () -> {
+            ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.YELLOW + "Cards shuffling in " + ChatColor.RED + "3" + ChatColor.YELLOW + "...");
+            Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+                if (ultimateBingo.bingoFunctions.isActivePlayer(player)) {
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f);
+                }
+            });
+        }, 0L);
+
+        Bukkit.getScheduler().runTaskLater(ultimateBingo, () -> {
+            ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.YELLOW + "Cards shuffling in " + ChatColor.RED + "2" + ChatColor.YELLOW + "...");
+            Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+                if (ultimateBingo.bingoFunctions.isActivePlayer(player)) {
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.2f);
+                }
+            });
+        }, 20L);
+
+        Bukkit.getScheduler().runTaskLater(ultimateBingo, () -> {
+            ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.YELLOW + "Cards shuffling in " + ChatColor.RED + "1" + ChatColor.YELLOW + "...");
+            Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+                if (ultimateBingo.bingoFunctions.isActivePlayer(player)) {
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.5f);
+                }
+            });
+        }, 40L);
+
+        Bukkit.getScheduler().runTaskLater(ultimateBingo, () -> {
+            shufflePlayerCards();
+            ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GREEN + "" + ChatColor.BOLD + "SHUFFLE!" + ChatColor.RESET + ChatColor.GREEN + " Cards have been shuffled!");
+            Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+                if (ultimateBingo.bingoFunctions.isActivePlayer(player)) {
+                    player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+                }
+            });
+        }, 60L);
+    }
+
+    private void shufflePlayerCards() {
+        // Determine difficulty level for generating new materials
+        int difficultyLevel;
+        switch (ultimateBingo.currentDifficulty.toLowerCase()) {
+            case "normal":
+                difficultyLevel = 2;
+                break;
+            case "hard":
+                difficultyLevel = 3;
+                break;
+            default:
+                difficultyLevel = 1;
+                break;
+        }
+
+        Random random = new Random();
+
+        for (UUID playerId : bingoGUIs.keySet()) {
+            Inventory playerGUI = bingoGUIs.get(playerId);
+            List<ItemStack> playerCard = playerBingoCards.get(playerId);
+
+            if (playerGUI == null || playerCard == null) continue;
+
+            // Collect uncompleted item slots
+            List<Integer> uncompletedSlots = new ArrayList<>();
+
+            for (int i = 0; i < slots.length; i++) {
+                int slot = slots[i];
+                ItemStack item = playerGUI.getItem(slot);
+
+                if (item != null && item.getType() != ultimateBingo.tickedItemMaterial) {
+                    uncompletedSlots.add(slot);
+                }
+            }
+
+            // Safety check: Need at least 3 uncompleted items (2 to shuffle + 1 to replace)
+            if (uncompletedSlots.size() < 3) {
+                continue; // Skip this player, not enough items to shuffle
+            }
+
+            // Step 1: Shuffle 1-2 pairs of items
+            int pairsToShuffle = random.nextInt(2) + 1; // Randomly choose 1 or 2
+
+            for (int pair = 0; pair < pairsToShuffle && uncompletedSlots.size() >= 2; pair++) {
+                // Pick two random uncompleted slots
+                int index1 = random.nextInt(uncompletedSlots.size());
+                int slot1 = uncompletedSlots.get(index1);
+                uncompletedSlots.remove(index1); // Remove so we don't pick it again
+
+                int index2 = random.nextInt(uncompletedSlots.size());
+                int slot2 = uncompletedSlots.get(index2);
+                uncompletedSlots.remove(index2); // Remove so we don't pick it again
+
+                // Swap the items in these two slots
+                ItemStack item1 = playerGUI.getItem(slot1);
+                ItemStack item2 = playerGUI.getItem(slot2);
+
+                playerGUI.setItem(slot1, item2);
+                playerGUI.setItem(slot2, item1);
+            }
+
+            // Step 2: Replace 1 random uncompleted item with a new material
+            if (!uncompletedSlots.isEmpty()) {
+                // Pick a random slot from remaining uncompleted slots
+                int slotToReplace = uncompletedSlots.get(random.nextInt(uncompletedSlots.size()));
+
+                // Get current items on the card to avoid duplicates
+                Set<Material> currentMaterials = new HashSet<>();
+                for (int slot : slots) {
+                    ItemStack item = playerGUI.getItem(slot);
+                    if (item != null && item.getType() != ultimateBingo.tickedItemMaterial) {
+                        currentMaterials.add(item.getType());
+                    }
+                }
+
+                // Generate a pool of new materials and find one not already on the card
+                List<Material> availableMaterials = generateMaterials(difficultyLevel);
+                Material newMaterial = null;
+
+                for (Material material : availableMaterials) {
+                    if (!currentMaterials.contains(material)) {
+                        newMaterial = material;
+                        break;
+                    }
+                }
+
+                // If we found a unique material, replace the old one
+                if (newMaterial != null) {
+                    ItemStack newItem = new ItemStack(newMaterial);
+                    playerGUI.setItem(slotToReplace, newItem);
+                }
+            }
+
+            // Update the player's card list
+            List<ItemStack> newCard = new ArrayList<>();
+            for (int slot : slots) {
+                ItemStack item = playerGUI.getItem(slot);
+                if (item != null) {
+                    newCard.add(item);
+                }
+            }
+            playerBingoCards.put(playerId, newCard);
+
+            // If player has GUI open, update it
+            Player player = Bukkit.getPlayer(playerId);
+            if (player != null && player.getOpenInventory().getTopInventory().equals(playerGUI)) {
+                player.updateInventory();
+            }
+        }
     }
 
 
