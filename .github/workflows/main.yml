@@ -88,6 +88,9 @@ jobs:
             **Build Number:** ${{ env.BUILD_NUMBER }}
             **File:** `UltimateBingo-build-${{ env.BUILD_NUMBER }}.jar`
             
+            **Changelog:**
+            ${{ env.CHANGELOG }}
+            
             ✅ Build completed successfully! Download the .jar file attached.
           embed-color: 3066993
           embed-thumbnail-url: https://cdn.modrinth.com/data/R3lqEeTT/06dda0c7f1e496e976fb97cb27d02d3e61cef995.jpeg
