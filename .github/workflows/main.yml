@@ -111,53 +111,17 @@ jobs:
                ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: Upload .jar directly to Discord
-        run: |
-          BUILD_NUMBER=${{ env.BUILD_NUMBER }}
-          FILENAME="UltimateBingo-build-${BUILD_NUMBER}.jar"
-          FILEPATH="./target/$FILENAME"
-          
-          pip3 install requests
-          
-          python3 << 'PYTHON_SCRIPT'
-          import requests
-          import os
-          import json
-          from datetime import datetime, timezone
-
-          build_number = os.environ['BUILD_NUMBER']
-          filename = f"UltimateBingo-build-{build_number}.jar"
-          filepath = f"./target/{filename}"
-          webhook_url = "${{ secrets.DISCORD_WEBHOOK_URL }}"
-
-          # Create embed
-          payload = {
-              "embeds": [{
-                  "title": f"📦 UltimateBingo - Build #{build_number}",
-                  "description": f"**Plugin:** UltimateBingo\n**Build Number:** {build_number}\n**File:** `{filename}`\n\n✅ Build completed successfully! Download the .jar file attached below.",
-                  "color": 3066993,
-                  "thumbnail": {
-                      "url": "https://cdn.modrinth.com/data/R3lqEeTT/06dda0c7f1e496e976fb97cb27d02d3e61cef995.jpeg"
-                  },
-                  "footer": {
-                      "text": "UltimateBingo • Direct File Upload"
-                  },
-                  "timestamp": datetime.now(timezone.utc).isoformat()
-              }]
-          }
-
-          # Send to Discord
-          with open(filepath, 'rb') as f:
-              response = requests.post(
-                  webhook_url,
-                  data={"payload_json": json.dumps(payload)},
-                  files={"file": (filename, f)}
-              )
-          
-          print(f"Status: {response.status_code}")
-          if response.status_code != 200:
-              print(f"Response: {response.text}")
-          else:
-              print("File uploaded successfully!")
-          PYTHON_SCRIPT
-        env:
-          BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          filename: ./target/UltimateBingo-build-${{ env.BUILD_NUMBER }}.jar
+          embed-title: "📦 UltimateBingo - Build #${{ env.BUILD_NUMBER }}"
+          embed-description: |
+            **Plugin:** UltimateBingo
+            **Build Number:** ${{ env.BUILD_NUMBER }}
+            **File:** `UltimateBingo-build-${{ env.BUILD_NUMBER }}.jar`
+            
+            ✅ Build completed successfully! Download the .jar file attached below.
+          embed-color: 3066993
+          embed-thumbnail-url: https://cdn.modrinth.com/data/R3lqEeTT/06dda0c7f1e496e976fb97cb27d02d3e61cef995.jpeg
+          embed-footer-text: "UltimateBingo • Direct File Upload"
