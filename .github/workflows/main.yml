@@ -120,21 +120,32 @@ jobs:
           FILENAME="UltimateBingo-build-${BUILD_NUMBER}.jar"
           FILEPATH="./target/$FILENAME"
           
-          JSON_PAYLOAD=$(jq -n \
-            --arg title "📦 UltimateBingo - Build #$BUILD_NUMBER" \
-            --arg desc "**Plugin:** UltimateBingo\n**Build Number:** $BUILD_NUMBER\n**File:** \`$FILENAME\`\n\n✅ Build completed successfully! Download the .jar file attached below." \
-            --arg thumb "https://cdn.modrinth.com/data/R3lqEeTT/06dda0c7f1e496e976fb97cb27d02d3e61cef995.jpeg" \
-            '{
-              "embeds": [{
-                "title": $title,
-                "description": $desc,
-                "color": 3066993,
-                "thumbnail": { "url": $thumb },
-                "footer": { "text": "UltimateBingo • Direct File Upload" },
-                "timestamp": (now | todate)
-              }]
-            }')
-
-          curl -F "payload_json=$JSON_PAYLOAD" \
+          # Create the embed JSON
+          cat > embed.json << 'EOF'
+          {
+            "embeds": [{
+              "title": "📦 UltimateBingo - Build #BUILD_NUM",
+              "description": "**Plugin:** UltimateBingo\n**Build Number:** BUILD_NUM\n**File:** `FNAME`\n\n✅ Build completed successfully! Download the .jar file attached below.",
+              "color": 3066993,
+              "thumbnail": {
+                "url": "https://cdn.modrinth.com/data/R3lqEeTT/06dda0c7f1e496e976fb97cb27d02d3e61cef995.jpeg"
+              },
+              "footer": {
+                "text": "UltimateBingo • Direct File Upload"
+              },
+              "timestamp": "TIMESTAMP"
+            }]
+          }
+          EOF
+          
+          # Replace placeholders
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          sed -i "s/BUILD_NUM/$BUILD_NUMBER/g" embed.json
+          sed -i "s/FNAME/$FILENAME/g" embed.json
+          sed -i "s/TIMESTAMP/$TIMESTAMP/g" embed.json
+          
+          # Send to Discord
+          curl -H "Content-Type: multipart/form-data" \
+               -F "payload_json=<embed.json" \
                -F "file=@$FILEPATH" \
                ${{ secrets.DISCORD_WEBHOOK_URL }}
