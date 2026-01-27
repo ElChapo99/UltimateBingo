@@ -422,7 +422,7 @@ public class BingoCommand implements CommandExecutor {
                     }
                 } else if (ultimateBingo.currentGameMode.equalsIgnoreCase("shuffle")) {
 
-                    ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GREEN + "Shuffle mode - Cards shuffle every " + ultimateBingo.shuffleIntervalMinutes + " minutes!");
+                    ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GREEN + "Shuffle mode - Cards shuffle every " + ultimateBingo.shuffleIntervalMinutes + " minute(s)!");
 
                     if (ultimateBingo.currentFullCard) {
                         ultimateBingo.bingoFunctions.broadcastMessageToBingoPlayers(ChatColor.GREEN + "Get a full card to win! " + timeLimitString);
