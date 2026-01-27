@@ -145,7 +145,6 @@ jobs:
           sed -i "s/TIMESTAMP/$TIMESTAMP/g" embed.json
           
           # Send to Discord
-          curl -H "Content-Type: multipart/form-data" \
-               -F "payload_json=<embed.json" \
+          curl -F "payload_json=<embed.json" \
                -F "file=@$FILEPATH" \
                ${{ secrets.DISCORD_WEBHOOK_URL }}
