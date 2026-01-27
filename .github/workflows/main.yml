@@ -116,10 +116,13 @@ jobs:
           FILENAME="UltimateBingo-build-${BUILD_NUMBER}.jar"
           FILEPATH="./target/$FILENAME"
           
+          pip3 install requests
+          
           python3 << 'PYTHON_SCRIPT'
           import requests
           import os
-          from datetime import datetime
+          import json
+          from datetime import datetime, timezone
 
           build_number = os.environ['BUILD_NUMBER']
           filename = f"UltimateBingo-build-{build_number}.jar"
@@ -127,7 +130,7 @@ jobs:
           webhook_url = "${{ secrets.DISCORD_WEBHOOK_URL }}"
 
           # Create embed
-          embed = {
+          payload = {
               "embeds": [{
                   "title": f"📦 UltimateBingo - Build #{build_number}",
                   "description": f"**Plugin:** UltimateBingo\n**Build Number:** {build_number}\n**File:** `{filename}`\n\n✅ Build completed successfully! Download the .jar file attached below.",
@@ -138,7 +141,7 @@ jobs:
                   "footer": {
                       "text": "UltimateBingo • Direct File Upload"
                   },
-                  "timestamp": datetime.utcnow().isoformat()
+                  "timestamp": datetime.now(timezone.utc).isoformat()
               }]
           }
 
@@ -146,12 +149,15 @@ jobs:
           with open(filepath, 'rb') as f:
               response = requests.post(
                   webhook_url,
-                  data={"payload_json": str(embed).replace("'", '"')},
+                  data={"payload_json": json.dumps(payload)},
                   files={"file": (filename, f)}
               )
           
           print(f"Status: {response.status_code}")
-          print(f"Response: {response.text}")
+          if response.status_code != 200:
+              print(f"Response: {response.text}")
+          else:
+              print("File uploaded successfully!")
           PYTHON_SCRIPT
         env:
           BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
