@@ -114,6 +114,32 @@ jobs:
                -X POST \
                -d "$JSON_PAYLOAD" \
                ${{ secrets.DISCORD_WEBHOOK_URL }}
+
       - name: Trigger WordPress GitHub Releases Sync
         run: |
           curl -s -o /dev/null -w "%{http_code}" "${{ secrets.WORDPRESS_SYNC_URL }}"
+
+      - name: Upload .jar directly to Discord
+        run: |
+          BUILD_NUMBER=${{ env.BUILD_NUMBER }}
+          FILENAME="UltimateBingo-build-${BUILD_NUMBER}.jar"
+          FILEPATH="./target/$FILENAME"
+          
+          JSON_PAYLOAD=$(jq -n \
+            --arg title "📦 UltimateBingo - Build #$BUILD_NUMBER" \
+            --arg desc "**Plugin:** UltimateBingo\n**Build Number:** $BUILD_NUMBER\n**File:** \`$FILENAME\`\n\n✅ Build completed successfully! Download the .jar file attached below." \
+            --arg thumb "https://cdn.modrinth.com/data/R3lqEeTT/06dda0c7f1e496e976fb97cb27d02d3e61cef995.jpeg" \
+            '{
+              "embeds": [{
+                "title": $title,
+                "description": $desc,
+                "color": 3066993,
+                "thumbnail": { "url": $thumb },
+                "footer": { "text": "UltimateBingo • Direct File Upload" },
+                "timestamp": (now | todate)
+              }]
+            }')
+
+          curl -F "payload_json=$JSON_PAYLOAD" \
+               -F "file=@$FILEPATH" \
+               ${{ secrets.DISCORD_WEBHOOK_URL }}
