@@ -19,6 +19,7 @@ bingo-world: default
 count-solo-games: false
 
 # Shuffle mode: How many minutes between card shuffles (default: 5)
+# Must be whole minute values, eg; 1, 5, 10 etc.
 shuffle-interval-minutes: 5
 
 ################################################
