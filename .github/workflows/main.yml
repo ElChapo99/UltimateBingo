@@ -115,28 +115,43 @@ jobs:
           BUILD_NUMBER=${{ env.BUILD_NUMBER }}
           FILENAME="UltimateBingo-build-${BUILD_NUMBER}.jar"
           FILEPATH="./target/$FILENAME"
-          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           
-          # Create JSON payload as a string
-          JSON_PAYLOAD=$(cat <<EOF
-          {
-            "embeds": [{
-              "title": "📦 UltimateBingo - Build #${BUILD_NUMBER}",
-              "description": "**Plugin:** UltimateBingo\n**Build Number:** ${BUILD_NUMBER}\n**File:** \`${FILENAME}\`\n\n✅ Build completed successfully! Download the .jar file attached below.",
-              "color": 3066993,
-              "thumbnail": {
-                "url": "https://cdn.modrinth.com/data/R3lqEeTT/06dda0c7f1e496e976fb97cb27d02d3e61cef995.jpeg"
-              },
-              "footer": {
-                "text": "UltimateBingo • Direct File Upload"
-              },
-              "timestamp": "${TIMESTAMP}"
-            }]
+          python3 << 'PYTHON_SCRIPT'
+          import requests
+          import os
+          from datetime import datetime
+
+          build_number = os.environ['BUILD_NUMBER']
+          filename = f"UltimateBingo-build-{build_number}.jar"
+          filepath = f"./target/{filename}"
+          webhook_url = "${{ secrets.DISCORD_WEBHOOK_URL }}"
+
+          # Create embed
+          embed = {
+              "embeds": [{
+                  "title": f"📦 UltimateBingo - Build #{build_number}",
+                  "description": f"**Plugin:** UltimateBingo\n**Build Number:** {build_number}\n**File:** `{filename}`\n\n✅ Build completed successfully! Download the .jar file attached below.",
+                  "color": 3066993,
+                  "thumbnail": {
+                      "url": "https://cdn.modrinth.com/data/R3lqEeTT/06dda0c7f1e496e976fb97cb27d02d3e61cef995.jpeg"
+                  },
+                  "footer": {
+                      "text": "UltimateBingo • Direct File Upload"
+                  },
+                  "timestamp": datetime.utcnow().isoformat()
+              }]
           }
-          EOF
-          )
+
+          # Send to Discord
+          with open(filepath, 'rb') as f:
+              response = requests.post(
+                  webhook_url,
+                  data={"payload_json": str(embed).replace("'", '"')},
+                  files={"file": (filename, f)}
+              )
           
-          # Send to Discord with file
-          curl -F "payload_json=${JSON_PAYLOAD}" \
-               -F "file=@${FILEPATH}" \
-               ${{ secrets.DISCORD_WEBHOOK_URL }}
+          print(f"Status: {response.status_code}")
+          print(f"Response: {response.text}")
+          PYTHON_SCRIPT
+        env:
+          BUILD_NUMBER: ${{ env.BUILD_NUMBER }}
