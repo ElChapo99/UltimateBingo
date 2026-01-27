@@ -110,22 +110,19 @@ jobs:
                -d "$JSON_PAYLOAD" \
                ${{ secrets.DISCORD_WEBHOOK_URL }}
 
-      - name: Trigger WordPress GitHub Releases Sync
-        run: |
-          curl -s -o /dev/null -w "%{http_code}" "${{ secrets.WORDPRESS_SYNC_URL }}"
-
       - name: Upload .jar directly to Discord
         run: |
           BUILD_NUMBER=${{ env.BUILD_NUMBER }}
           FILENAME="UltimateBingo-build-${BUILD_NUMBER}.jar"
           FILEPATH="./target/$FILENAME"
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
           
-          # Create the embed JSON
-          cat > embed.json << 'EOF'
+          # Create JSON payload as a string
+          JSON_PAYLOAD=$(cat <<EOF
           {
             "embeds": [{
-              "title": "📦 UltimateBingo - Build #BUILD_NUM",
-              "description": "**Plugin:** UltimateBingo\n**Build Number:** BUILD_NUM\n**File:** `FNAME`\n\n✅ Build completed successfully! Download the .jar file attached below.",
+              "title": "📦 UltimateBingo - Build #${BUILD_NUMBER}",
+              "description": "**Plugin:** UltimateBingo\n**Build Number:** ${BUILD_NUMBER}\n**File:** \`${FILENAME}\`\n\n✅ Build completed successfully! Download the .jar file attached below.",
               "color": 3066993,
               "thumbnail": {
                 "url": "https://cdn.modrinth.com/data/R3lqEeTT/06dda0c7f1e496e976fb97cb27d02d3e61cef995.jpeg"
@@ -133,18 +130,13 @@ jobs:
               "footer": {
                 "text": "UltimateBingo • Direct File Upload"
               },
-              "timestamp": "TIMESTAMP"
+              "timestamp": "${TIMESTAMP}"
             }]
           }
           EOF
+          )
           
-          # Replace placeholders
-          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
-          sed -i "s/BUILD_NUM/$BUILD_NUMBER/g" embed.json
-          sed -i "s/FNAME/$FILENAME/g" embed.json
-          sed -i "s/TIMESTAMP/$TIMESTAMP/g" embed.json
-          
-          # Send to Discord
-          curl -F "payload_json=<embed.json" \
-               -F "file=@$FILEPATH" \
+          # Send to Discord with file
+          curl -F "payload_json=${JSON_PAYLOAD}" \
+               -F "file=@${FILEPATH}" \
                ${{ secrets.DISCORD_WEBHOOK_URL }}
