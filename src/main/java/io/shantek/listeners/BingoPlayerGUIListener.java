@@ -36,7 +36,7 @@ public class BingoPlayerGUIListener implements Listener {
         if (ultimateBingo.bingoFunctions.isActivePlayer(player)) {
 
             // Asegurarse de que el evento fue activado en la GUI de configuración de Bingo
-            if (e.getView().getTitle().contains("Welcome to Ultimate Bingo")) {
+            if (e.getView().getTitle().contains("Welcome to Vapermc Bingo")) {
                 e.setCancelled(true);  // Evitar que arrastren ítems
 
                 int slot = e.getRawSlot();
