@@ -14,6 +14,7 @@ public class Leaderboard {
     private final File leaderboardFile;
     private FileConfiguration leaderboardConfig;
 
+    // Mapa que guarda las estadísticas de cada jugador (UUID → PlayerStats)
     private final Map<UUID, PlayerStats> playerStatsMap = new HashMap<>();
 
     public Leaderboard(UltimateBingo plugin) {
@@ -22,6 +23,7 @@ public class Leaderboard {
         loadLeaderboardData();
     }
 
+    // Cargar datos del leaderboard desde el archivo YAML
     public void loadLeaderboardData() {
         if (!leaderboardFile.exists()) {
             try {
@@ -39,7 +41,7 @@ public class Leaderboard {
 
             PlayerStats stats = new PlayerStats(playerUUID);
 
-            // Correctly add the values for wins and losses
+            // Añadir correctamente las victorias y derrotas
             wins.forEach((category, value) -> stats.setWins(category, (Integer) value));
             losses.forEach((category, value) -> stats.setLosses(category, (Integer) value));
 
@@ -47,6 +49,7 @@ public class Leaderboard {
         }
     }
 
+    // Guardar datos del leaderboard en el archivo YAML
     public void saveLeaderboardData() {
         for (Map.Entry<UUID, PlayerStats> entry : playerStatsMap.entrySet()) {
             String key = entry.getKey().toString();
@@ -60,26 +63,34 @@ public class Leaderboard {
         }
     }
 
+    // Obtener top jugadores según configuración del juego
     public List<PlayerStats> getTopPlayers(String cardSize, boolean fullCard, String difficulty, String gameMode) {
         List<PlayerStats> sortedStats = new ArrayList<>(playerStatsMap.values());
-        sortedStats.sort((a, b) -> Integer.compare(b.getWins(cardSize, fullCard, difficulty, gameMode), a.getWins(cardSize, fullCard, difficulty, gameMode)));
+        sortedStats.sort((a, b) -> Integer.compare(
+                b.getWins(cardSize, fullCard, difficulty, gameMode),
+                a.getWins(cardSize, fullCard, difficulty, gameMode)
+        ));
         return sortedStats;
     }
 
+    // Obtener top jugadores global (todas las partidas)
     public List<PlayerStats> getTopPlayersOverall() {
         List<PlayerStats> sortedStats = new ArrayList<>(playerStatsMap.values());
         sortedStats.sort((a, b) -> Integer.compare(b.getTotalWins(), a.getTotalWins()));
         return sortedStats;
     }
 
+    // Añadir resultado de una partida
     public void addGameResult(UUID playerUUID, String cardSize, boolean fullCard, String difficulty, String gameMode, boolean won) {
         PlayerStats stats = playerStatsMap.getOrDefault(playerUUID, new PlayerStats(playerUUID));
         stats.addResult(cardSize, fullCard, difficulty, gameMode, won);
-        playerStatsMap.put(playerUUID, stats); // Correctly add stats to map
+        playerStatsMap.put(playerUUID, stats); // Guardar stats en el mapa
         saveLeaderboardData();
     }
 
+    // Obtener estadísticas de un jugador
     public PlayerStats getPlayerStats(UUID playerUUID) {
         return playerStatsMap.getOrDefault(playerUUID, new PlayerStats(playerUUID));
     }
 }
+
