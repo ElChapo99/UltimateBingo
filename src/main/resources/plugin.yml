@@ -3,26 +3,27 @@ version: '${project.version}'
 main: io.shantek.UltimateBingo
 api-version: '1.20'
 
-# This sets PlaceholderAPI as an optional dependency for your plugin.
+# Esto establece PlaceholderAPI como una dependencia opcional para tu plugin.
 softdepend: [PlaceholderAPI]
 
 commands:
   bingo:
-    description: Opens your current bingo cards, add start or stop to start or stop bingo. Configure settings with settings
+    description: Abre tus cartas de bingo actuales. Usa start o stop para iniciar o detener el bingo. Configura opciones con settings
 
 permissions:
   shantek.ultimatebingo.start:
-    description: Allows players to start games using the start command
+    description: Permite a los jugadores iniciar juegos usando el comando start
     default: op
 
   shantek.ultimatebingo.stop:
-    description: Allows players to stop games using the stop command
+    description: Permite a los jugadores detener juegos usando el comando stop
     default: op
 
   shantek.ultimatebingo.settings:
-    description: Allows players to add/remove items from the game
+    description: Permite a los jugadores añadir o quitar ítems del juego
     default: op
 
   shantek.ultimatebingo.signs:
-    description: Allows players to configure and start games with in game signs.
+    description: Permite a los jugadores configurar e iniciar juegos con letreros dentro del juego.
     default: op
+
