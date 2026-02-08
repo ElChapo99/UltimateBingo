@@ -35,12 +35,12 @@ public class BingoPlayerGUIListener implements Listener {
 
         if (ultimateBingo.bingoFunctions.isActivePlayer(player)) {
 
-            // Ensure the event was triggered in the Bingo configuration GUI
+            // Asegurarse de que el evento fue activado en la GUI de configuración de Bingo
             if (e.getView().getTitle().contains("Welcome to Ultimate Bingo")) {
-                e.setCancelled(true);  // Prevent dragging items
+                e.setCancelled(true);  // Evitar que arrastren ítems
 
                 int slot = e.getRawSlot();
-                // Ensure clicks are within the inventory size
+                // Asegurarse de que el click esté dentro del inventario
                 if (slot >= 0 && slot < 9) {
                     switch (slot) {
                         case 0:
@@ -55,18 +55,20 @@ public class BingoPlayerGUIListener implements Listener {
                     }
                 }
 
-            } else if (e.getView().getTitle().contains("Player Bingo Cards") || (e.getView().getTitle().contains("Team Bingo Cards"))) {
+            } 
+            // GUI de cartas de jugadores o equipos
+            else if (e.getView().getTitle().contains("Player Bingo Cards") || (e.getView().getTitle().contains("Team Bingo Cards"))) {
 
-                // Prevent any items from being dragged
+                // Evitar mover ítems
                 e.setCancelled(true);
 
-                // Deal with the back to menu
+                // Botón de regresar al menú
                 int slot = e.getRawSlot();
 
                 if (slot == 53) {
                     ItemStack clickedItem = e.getCurrentItem();
                     if (clickedItem != null && clickedItem.getType() == Material.CHEST) {
-                        // Check the display name of the item to confirm it's the "Back to Menu" chest
+                        // Verificar si es el cofre de "Volver al menú"
                         if (clickedItem.hasItemMeta() && clickedItem.getItemMeta().hasDisplayName()
                                 && ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName()).equals("Back to menu")) {
 
@@ -74,46 +76,50 @@ public class BingoPlayerGUIListener implements Listener {
                             player.openInventory(ultimateBingo.bingoPlayerGUIManager.createPlayerGUI(player));
                         }
                     }
-                } else {
+                } 
+                else {
 
+                    // Modo equipos
                     if (ultimateBingo.currentGameMode.equalsIgnoreCase("teams")) {
 
-                        // Ensure the event was triggered in the list of player bingo cards
                         ItemStack clickedItem = e.getCurrentItem();
                         if (clickedItem == null){
-                            return; // Not a valid item, ignore the click
+                            return; // Ítem inválido
                         }
 
                         if (clickedItem.getType() == Material.RED_WOOL) {
                             ultimateBingo.bingoCommand.openBingoTeamCard(player, ultimateBingo.redTeamInventory);
-                        } else if (clickedItem.getType() == Material.BLUE_WOOL) {
+                        } 
+                        else if (clickedItem.getType() == Material.BLUE_WOOL) {
                             ultimateBingo.bingoCommand.openBingoTeamCard(player, ultimateBingo.blueTeamInventory);
-                        } else if (clickedItem.getType() == Material.YELLOW_WOOL) {
+                        } 
+                        else if (clickedItem.getType() == Material.YELLOW_WOOL) {
                             ultimateBingo.bingoCommand.openBingoTeamCard(player, ultimateBingo.yellowTeamInventory);
                         }
 
-                    } else {
+                    } 
+                    else {
 
-                        // Ensure the event was triggered in the list of player bingo cards
+                        // Lista de cartas de jugadores
                         ItemStack clickedItem = e.getCurrentItem();
                         if (clickedItem == null || clickedItem.getType() != Material.PLAYER_HEAD) {
-                            return; // Not a valid item, ignore the click
+                            return; // No es una cabeza válida
                         }
 
-                        // Get the item's display name and strip color codes to retrieve the player's name
+                        // Obtener nombre del jugador desde el ítem
                         String displayName = ChatColor.stripColor(clickedItem.getItemMeta().getDisplayName());
 
-                        // Check if a player with this name exists and is online
+                        // Verificar si el jugador existe y está conectado
                         Player targetPlayer = Bukkit.getPlayerExact(displayName);
                         if (targetPlayer == null) {
-                            e.getWhoClicked().sendMessage(ChatColor.RED + "The player's bingo card you are trying to access does not exist or they are not online.");
-                            return; // No such player found or not online, ignore the click
+                            e.getWhoClicked().sendMessage(ChatColor.RED + "La carta de bingo del jugador no existe o no está conectado.");
+                            return;
                         }
 
-                        // Close the current inventory
+                        // Cerrar inventario actual
                         e.getWhoClicked().closeInventory();
 
-                        // Call a method to open the bingo card of the target player
+                        // Abrir la carta de bingo del jugador objetivo
                         ultimateBingo.bingoCommand.openBingoOtherPlayer(player, targetPlayer);
 
                     }
@@ -122,6 +128,3 @@ public class BingoPlayerGUIListener implements Listener {
         }
     }
 }
-
-
-
