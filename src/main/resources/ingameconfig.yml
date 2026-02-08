@@ -1,11 +1,12 @@
 signs:
-  Game Mode: ""
-  Difficulty: ""
-  Card Size: ""
-  Loadout: ""
-  Reveal Cards: ""
-  Win Condition: ""
-  Card Type: ""
-  Time Limit: ""
+  Game Mode: "Modo de Juego"
+  Difficulty: "Dificultad"
+  Card Size: "Tamaño de Carta"
+  Loadout: "Equipamiento Inicial"
+  Reveal Cards: "Revelar Cartas"
+  Win Condition: "Condición de Victoria"
+  Card Type: "Tipo de Carta"
+  Time Limit: "Límite de Tiempo"
 button:
-  startbutton: ""
+  startbutton: "Iniciar Juego"
+
